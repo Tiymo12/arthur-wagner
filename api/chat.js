@@ -24,21 +24,43 @@ export default async function handler(req, res) {
 
     let reply = completion.choices[0].message.content;
 
-    // Wenn User "ja" schreibt → Termin-Hinweis
-    if (message.trim().toLowerCase() === "ja") {
+    // -------------------------------
+    // Termin-Signalwörter abfangen
+    // -------------------------------
+    const lowerMsg = message.trim().toLowerCase();
+
+    // Synonyme / Varianten für "ja"
+    const yesTriggers = [
+      "ja",
+      "ja klingt gut",
+      "klar",
+      "auf jeden fall",
+      "passt",
+      "gerne",
+      "sicher",
+      "natürlich",
+      "definitiv",
+      "absolut"
+    ];
+
+    if (yesTriggers.some(trigger => lowerMsg.includes(trigger))) {
       return res.json({
-        reply: "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
+        reply:
+          "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
       });
     }
 
-    // Wenn User unsicher wirkt → leichte Termin-Empfehlung
+    // -------------------------------
+    // Wenn User unsicher wirkt → Termin-Empfehlung
+    // -------------------------------
     if (
-      message.toLowerCase().includes("weiß nicht") ||
-      message.toLowerCase().includes("unsicher") ||
-      message.toLowerCase().includes("problem") ||
-      message.toLowerCase().includes("schwierig")
+      lowerMsg.includes("weiß nicht") ||
+      lowerMsg.includes("unsicher") ||
+      lowerMsg.includes("problem") ||
+      lowerMsg.includes("schwierig")
     ) {
-      reply += "\n\n💡 Brauchst du Unterstützung dabei? Willst du dir vielleicht einen Termin vereinbaren?";
+      reply +=
+        "\n\n💡 Brauchst du Unterstützung dabei? Willst du dir vielleicht einen Termin vereinbaren?";
     }
 
     res.json({ reply });
