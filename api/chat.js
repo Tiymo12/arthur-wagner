@@ -4,6 +4,9 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// kleiner Speicher für User-Status (in realem Projekt besser per Session)
+let offeredAppointment = false;
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -15,11 +18,11 @@ module.exports = async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: settings?.temperature || 0.8,
-      max_tokens: 180, // kurze Antworten
+      max_tokens: 180,
       messages: [
         {
           role: "system",
-          content: `${persona}\n\nAntworte wie ein echter Mensch: kurz, prägnant, max. 2–3 Sätze.`,
+          content: `${persona}\n\nAntworte kurz, prägnant (max. 2–3 Sätze).`,
         },
         { role: "user", content: message },
       ],
@@ -29,50 +32,58 @@ module.exports = async function handler(req, res) {
     const lowerMsg = message.trim().toLowerCase();
 
     // --------------------------------
-    // 1. Direkter Terminwunsch vom User
+    // Direkter Terminwunsch
     // --------------------------------
     if (
       lowerMsg.includes("termin") ||
       lowerMsg.includes("erstgespräch") ||
       lowerMsg.includes("gespräch vereinbaren")
     ) {
+      offeredAppointment = false; // Reset
       return res.json({
         reply:
           "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht.",
       });
     }
 
-   // --------------------------------
-// 2. Klare Bestätigung nach Termin-Angebot
-// --------------------------------
-const yesTriggers = [
-  "ja",
-  "ja klingt gut",
-  "ja gerne",
-  "klar",
-  "auf jeden fall",
-  "definitiv",
-  "absolut",
-  "passt",
-  "alles klar",
-  "klingt gut",
-  "hört sich gut an"
-];
+    // --------------------------------
+    // Zustimmungstrigger
+    // --------------------------------
+    const yesTriggers = [
+      "ja",
+      "jo",
+      "jop",
+      "yep",
+      "yeah",
+      "natürlich",
+      "klar",
+      "auf jeden fall",
+      "passt",
+      "definitiv",
+      "absolut",
+      "klingt gut",
+      "hört sich gut an",
+      "das wäre gut",
+    ];
 
-// Nur auslösen, wenn Nachricht kurz ist (<= 5 Wörter)
-// So vermeiden wir: "ich möchte gerne abnehmen"
-if (
-  (yesTriggers.some(trigger => lowerMsg === trigger || lowerMsg === trigger.trim())) &&
-  lowerMsg.split(" ").length <= 5
-) {
-  return res.json({
-    reply:
-      "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
-  });
-}
+    if (yesTriggers.some(trigger => lowerMsg.includes(trigger))) {
+      if (offeredAppointment) {
+        // zweite Zustimmung → jetzt fixen Termin-Link geben
+        offeredAppointment = false; // Reset
+        return res.json({
+          reply:
+            "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht.",
+        });
+      } else {
+        // erste Zustimmung → nur sanft reagieren
+        offeredAppointment = true;
+        reply +=
+          "\n\n💡 Das klingt so, als könnte ein Termin dir weiterhelfen. Willst du dir vielleicht einen vereinbaren?";
+      }
+    }
 
     // --------------------------------
-    // 3. Sanftes Termin-Angebot bei Unsicherheit
+    // Unsicherheit → sanftes Angebot
     // --------------------------------
     if (
       lowerMsg.includes("weiß nicht") ||
@@ -80,8 +91,9 @@ if (
       lowerMsg.includes("problem") ||
       lowerMsg.includes("schwierig")
     ) {
+      offeredAppointment = true;
       reply +=
-        "\n\n💡 Willst du dir vielleicht einen Termin vereinbaren, um das genauer zu besprechen?";
+        "\n\n💡 Brauchst du Unterstützung dabei? Wir könnten uns einen Termin ausmachen, um es genauer zu besprechen.";
     }
 
     res.json({ reply });
