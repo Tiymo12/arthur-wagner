@@ -63,7 +63,7 @@ function App() {
           ></textarea>
           <button type="submit" className="btn">Jetzt Erstgespräch sichern</button>
         </form>
-        <p>Nach Absenden bekommst du eine Bestätigung per E-Mail.</p>
+        <p>Danke für deine Anfrage 🙌 – Arthur schaut sich deine Nachricht an und meldet sich so schnell wie möglich..</p>
       </section>
 
       {/* Footer */}
