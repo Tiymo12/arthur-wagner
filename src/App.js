@@ -7,40 +7,40 @@ function App() {
     <div className="App">
       {/* Header */}
       <header className="header">
-        <h1>CoachChat AI</h1>
-        <p>Dein persönlicher AI-Chatbot für Social Media</p>
+        <h1>Arthur Wagner Coaching</h1>
+        <p>Dein Coach für Persönlichkeitsentwicklung und Business-Erfolg</p>
       </header>
 
       {/* Hero Section */}
       <section className="hero">
-        <h2>Automatisiere dein Social Media Business</h2>
+        <h2>Starte jetzt deine Reise zur besten Version deiner selbst</h2>
         <p>
-          Gewinne mehr Kunden, spare Zeit und steigere deine Reichweite – mit
-          deinem eigenen AI-Chatbot.
+          Gewinne Klarheit, Motivation und Fokus – mit Arthur Wagner und deinem
+          persönlichen AI-Chatbot, der dich sofort unterstützt.
         </p>
       </section>
 
       {/* Features */}
       <section className="features">
         <div className="feature">
-          <h3>🚀 Mehr Reichweite</h3>
-          <p>Beantworte Nachrichten 24/7 und steigere deine Sichtbarkeit.</p>
+          <h3>🌟 Persönliche Entwicklung</h3>
+          <p>Finde deine Stärken und arbeite gezielt an deinen Zielen.</p>
         </div>
         <div className="feature">
-          <h3>⏳ Zeit sparen</h3>
-          <p>Automatisiere Standardfragen und fokussiere dich auf dein Business.</p>
+          <h3>🚀 Business Coaching</h3>
+          <p>Mehr Fokus, bessere Strategien und nachhaltiger Erfolg.</p>
         </div>
         <div className="feature">
-          <h3>💰 Mehr Umsatz</h3>
-          <p>Nutze smarte Funnels, um Leads in zahlende Kunden zu verwandeln.</p>
+          <h3>💬 AI-Unterstützung</h3>
+          <p>Dein Chatbot steht dir 24/7 mit Tipps, Motivation und Inspiration zur Seite.</p>
         </div>
       </section>
 
-      {/* Call to Action / Demo-Formular */}
+      {/* Call to Action / Demo */}
       <section className="cta">
-        <h2>Bereit für deinen AI-Chatbot?</h2>
+        <h2>Kostenloses Erstgespräch anfragen</h2>
         <form
-          action="https://formspree.io/f/xdklbbpr"
+          action="https://formspree.io/f/xdklbbpr" 
           method="POST"
           target="_blank"
         >
@@ -58,20 +58,28 @@ function App() {
           />
           <textarea
             name="message"
-            placeholder="Deine Nachricht"
+            placeholder="Schreibe kurz, worum es geht"
             required
           ></textarea>
-          <button type="submit" className="btn">Demo anfragen</button>
+          <button type="submit" className="btn">Jetzt Erstgespräch sichern</button>
         </form>
-        <p>Du bekommst danach eine Bestätigung per E-Mail.</p>
+        <p>Nach Absenden bekommst du eine Bestätigung per E-Mail.</p>
       </section>
 
       {/* Footer */}
       <footer className="footer">
-        <p>© 2025 CoachChat AI – Alle Rechte vorbehalten</p>
+        <p>© 2025 Arthur Wagner Coaching – Alle Rechte vorbehalten</p>
       </footer>
 
-      <ChatWidget persona={`Tonfall: motivierend, knapp. Du repräsentierst einen Fitness-Coach mit 50k Followern.`} />
+      <ChatWidget persona={`Du bist der offizielle Chat von Arthur Wagner.  
+Sprich professionell, freundlich und inspirierend.  
+Deine Zielgruppe: Menschen zwischen 25 und 45, die Persönlichkeitsentwicklung oder Business-Coaching suchen.  
+
+Antworten: abwechslungsreich, mit motivierenden Beispielen, Emojis (🚀🌟💡), mal Tipps, mal Fragen zurück.  
+Wenn jemand 'ja' sagt bei einem Termin, dann antworte:  
+„Super 🙌! Klick links auf den Button **Kostenloses Erstgespräch anfragen**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht.“  
+
+Keine Preise nennen, keine medizinischen Ratschläge. Verweise bei Beschwerden an Fachleute.`} />
     </div>
   );
 }
