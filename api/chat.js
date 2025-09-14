@@ -15,44 +15,58 @@ export default async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: settings?.temperature || 0.8,
-      max_tokens: 200,
+      max_tokens: 180, // begrenzt Länge zusätzlich
       messages: [
-        { role: "system", content: persona },
+        {
+          role: "system",
+          content: `${persona}\n\nAntworte wie ein echter Mensch: kurz, prägnant, max. 2–3 Sätze.`
+        },
         { role: "user", content: message }
       ],
     });
 
     let reply = completion.choices[0].message.content;
-
-    // -------------------------------
-    // Termin-Signalwörter abfangen
-    // -------------------------------
     const lowerMsg = message.trim().toLowerCase();
 
-    // Synonyme / Varianten für "ja"
-    const yesTriggers = [
-      "ja",
-      "ja klingt gut",
-      "klar",
-      "auf jeden fall",
-      "passt",
-      "gerne",
-      "sicher",
-      "natürlich",
-      "definitiv",
-      "absolut"
-    ];
-
-    if (yesTriggers.some(trigger => lowerMsg.includes(trigger))) {
+    // --------------------------------
+    // 1. Direkter Terminwunsch vom User
+    // --------------------------------
+    if (
+      lowerMsg.includes("termin") ||
+      lowerMsg.includes("erstgespräch") ||
+      lowerMsg.includes("gespräch vereinbaren")
+    ) {
       return res.json({
         reply:
           "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
       });
     }
 
-    // -------------------------------
-    // Wenn User unsicher wirkt → Termin-Empfehlung
-    // -------------------------------
+    // --------------------------------
+    // 2. Klare Bestätigung nach Termin-Angebot
+    // --------------------------------
+    const yesTriggers = [
+      "ja",
+      "ja klingt gut",
+      "ja gerne",
+      "klar",
+      "auf jeden fall",
+      "definitiv",
+      "absolut",
+      "passt",
+      "gerne"
+    ];
+
+    if (yesTriggers.some(trigger => lowerMsg === trigger || lowerMsg.includes(trigger))) {
+      return res.json({
+        reply:
+          "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
+      });
+    }
+
+    // --------------------------------
+    // 3. Sanftes Termin-Angebot bei Unsicherheit
+    // --------------------------------
     if (
       lowerMsg.includes("weiß nicht") ||
       lowerMsg.includes("unsicher") ||
@@ -60,7 +74,7 @@ export default async function handler(req, res) {
       lowerMsg.includes("schwierig")
     ) {
       reply +=
-        "\n\n💡 Brauchst du Unterstützung dabei? Willst du dir vielleicht einen Termin vereinbaren?";
+        "\n\n💡 Willst du dir vielleicht einen Termin vereinbaren, um das genauer zu besprechen?";
     }
 
     res.json({ reply });
