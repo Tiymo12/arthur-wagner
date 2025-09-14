@@ -1,10 +1,10 @@
-import OpenAI from "openai";
+const OpenAI = require("openai");
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -15,13 +15,13 @@ export default async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: settings?.temperature || 0.8,
-      max_tokens: 180, // begrenzt Länge zusätzlich
+      max_tokens: 180, // kurze Antworten
       messages: [
         {
           role: "system",
-          content: `${persona}\n\nAntworte wie ein echter Mensch: kurz, prägnant, max. 2–3 Sätze.`
+          content: `${persona}\n\nAntworte wie ein echter Mensch: kurz, prägnant, max. 2–3 Sätze.`,
         },
-        { role: "user", content: message }
+        { role: "user", content: message },
       ],
     });
 
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     ) {
       return res.json({
         reply:
-          "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
+          "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht.",
       });
     }
 
@@ -46,30 +46,33 @@ export default async function handler(req, res) {
     // 2. Klare Bestätigung nach Termin-Angebot
     // --------------------------------
     const yesTriggers = [
-      const yesTriggers = [
-  "ja",
-  "jo",
-  "jop",
-  "yep",
-  "yeah",
-  "natürlich",
-  "klar",
-  "auf jeden fall",
-  "auf jeden",
-  "passt",
-  "gerne",
-  "sicher",
-  "definitiv",
-  "absolut",
-  "alles klar",
-  "klingt gut",
-  "hört sich gut an"
+      "ja",
+      "jo",
+      "jop",
+      "yep",
+      "yeah",
+      "natürlich",
+      "klar",
+      "auf jeden fall",
+      "auf jeden",
+      "passt",
+      "gerne",
+      "sicher",
+      "definitiv",
+      "absolut",
+      "alles klar",
+      "klingt gut",
+      "hört sich gut an",
     ];
 
-    if (yesTriggers.some(trigger => lowerMsg === trigger || lowerMsg.includes(trigger))) {
+    if (
+      yesTriggers.some(
+        (trigger) => lowerMsg === trigger || lowerMsg.includes(trigger)
+      )
+    ) {
       return res.json({
         reply:
-          "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
+          "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht.",
       });
     }
 
@@ -91,4 +94,4 @@ export default async function handler(req, res) {
     console.error(error);
     res.status(500).json({ error: "OpenAI API Error" });
   }
-}
+};
