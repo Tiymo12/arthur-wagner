@@ -42,39 +42,34 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // --------------------------------
-    // 2. Klare Bestätigung nach Termin-Angebot
-    // --------------------------------
-    const yesTriggers = [
-      "ja",
-      "jo",
-      "jop",
-      "yep",
-      "yeah",
-      "natürlich",
-      "klar",
-      "auf jeden fall",
-      "auf jeden",
-      "passt",
-      "gerne",
-      "sicher",
-      "definitiv",
-      "absolut",
-      "alles klar",
-      "klingt gut",
-      "hört sich gut an",
-    ];
+   // --------------------------------
+// 2. Klare Bestätigung nach Termin-Angebot
+// --------------------------------
+const yesTriggers = [
+  "ja",
+  "ja klingt gut",
+  "ja gerne",
+  "klar",
+  "auf jeden fall",
+  "definitiv",
+  "absolut",
+  "passt",
+  "alles klar",
+  "klingt gut",
+  "hört sich gut an"
+];
 
-    if (
-      yesTriggers.some(
-        (trigger) => lowerMsg === trigger || lowerMsg.includes(trigger)
-      )
-    ) {
-      return res.json({
-        reply:
-          "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht.",
-      });
-    }
+// Nur auslösen, wenn Nachricht kurz ist (<= 5 Wörter)
+// So vermeiden wir: "ich möchte gerne abnehmen"
+if (
+  (yesTriggers.some(trigger => lowerMsg === trigger || lowerMsg === trigger.trim())) &&
+  lowerMsg.split(" ").length <= 5
+) {
+  return res.json({
+    reply:
+      "Super 🙌! Klick links auf den Button **Jetzt Erstgespräch sichern**, trag deinen Namen und deine E-Mail ein und schreib kurz, worum es geht."
+  });
+}
 
     // --------------------------------
     // 3. Sanftes Termin-Angebot bei Unsicherheit
